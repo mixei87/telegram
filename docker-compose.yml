@@ -1,0 +1,26 @@
+services:
+  app:
+    build: .
+    ports:
+      - "${APP_PORT}:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${DB_EXPOSED_PORT}:${DB_PORT}"
+  redis:
+    image: redis:8-alpine
+    ports:
+      - "${REDIS_EXPOSED_PORT}:${REDIS_PORT}"
+volumes:
+  postgres_data:
