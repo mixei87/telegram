@@ -14,9 +14,8 @@ class Settings(BaseSettings):
     REDIS_PORT: int = 1111
 
     @property
-    def DB_URL(self) -> SecretStr:
-        return SecretStr(
-            f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}")
+    def DB_URL(self) -> str:
+        return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS.get_secret_value()}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
