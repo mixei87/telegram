@@ -1,11 +1,6 @@
 # Настройки приложения
-# from dotenv import load_dotenv, find_dotenv
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import SecretStr
-
-
-# dotenv_path = find_dotenv()
-# load_dotenv(dotenv_path)
 
 
 class Settings(BaseSettings):
@@ -19,7 +14,7 @@ class Settings(BaseSettings):
     REDIS_PORT: int = 1111
 
     @property
-    def DB_URL(self) -> SecretStr:
+    def db_url(self) -> SecretStr:
         return SecretStr(
             f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS.get_secret_value()}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}")
 
