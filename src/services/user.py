@@ -1,6 +1,6 @@
 from src.repositories.user import UserRepository
 from src.models import User
-from src.schemas.user import UserUpdate, UserCreate
+from src.schemas.user import UserUpdate
 
 
 class UserService:

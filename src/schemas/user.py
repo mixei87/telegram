@@ -1,4 +1,5 @@
 from pydantic import BaseModel, field_validator
+from src.schemas.base import IdValidationMixin
 
 
 class UserCreate(BaseModel):
@@ -27,13 +28,6 @@ class UserResponse(BaseModel):
         from_attributes = True
 
 
-class UserIdSchema(BaseModel):
+class UserIdSchema(IdValidationMixin, BaseModel):
     user_id: int
-
-    @field_validator("user_id")
-    def check_positive_and_not_too_big(cls, value: int) -> int:
-        if value < 0:
-            raise ValueError("ID не может быть отрицательным")
-        if value > 2_147_483_647:  # максимальное значение INT в PostgreSQL
-            raise ValueError("ID слишком большое")
-        return value
+    __id_fields__ = ["user_id"]
