@@ -1,7 +1,7 @@
 from sqlalchemy.orm import DeclarativeBase, mapped_column
 from sqlalchemy import String, DateTime, text
 from typing import Annotated
-from enum import Enum as PyEnum
+from enum import StrEnum as PyEnum
 
 
 # Базовый класс для всех моделей
