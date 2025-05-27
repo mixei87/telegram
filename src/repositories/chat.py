@@ -16,11 +16,7 @@ class ChatRepository:
         return chat
 
     async def get_by_id_with_members(self, chat_id: int) -> Chat | None:
-        stmt = (
-            select(Chat)
-            .where(Chat.id == chat_id)
-            .options(joinedload(Chat.members))
-        )
+        stmt = (select(Chat).where(Chat.id == chat_id).options(joinedload(Chat.members)))
         result = await self.session.execute(stmt)
         return result.unique().scalars().first()
 

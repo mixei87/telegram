@@ -1,20 +1,25 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel
 
 from src.models import ChatType
 from src.schemas.user import UserResponse
-from src.schemas.base import IdValidationMixin
+from src.schemas.base import IdValidationMixin, NameValidationMixin
 
 
-class ChatCreate(BaseModel):
+class ChatPersonalCreate(NameValidationMixin, BaseModel):
     name: str
-    type: ChatType
+    __name_fields__ = ["name"]
 
-    @field_validator("name")
-    def validate_name(cls, value):
-        value = value.strip()
-        if not value:
-            raise ValueError("Название чата не может быть пустым")
-        return value
+
+class ChatGroupCreate(NameValidationMixin, IdValidationMixin, BaseModel):
+    name: str
+    creator_id: int
+    __name_fields__ = ["name"]
+    __id_fields__ = ["creator_id"]
+
+
+class ChatId(IdValidationMixin, BaseModel):
+    id: int
+    __id_fields__ = ["id"]
 
 
 class ChatMember(IdValidationMixin, BaseModel):

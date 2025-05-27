@@ -12,17 +12,17 @@ class UserService:
 
     async def create_user(self, name: str, email: str, hashed_password: str) -> User:
         if await self.repo.get_by_email(email):
-            raise ValueError("Email already exists")
+            raise ValueError(f"Email {email} уже зарегистрирован")
         return await self.repo.create(name, email, hashed_password)
 
     async def update_user(self, user: User, data: UserUpdate) -> User:
         update_data = data.model_dump(exclude_unset=True)
         if not update_data:
-            raise ValueError("No fields to update")
+            raise ValueError("Нет полей для обновления")
         return await self.repo.update(user, update_data)
 
     async def delete_user(self, user_id: int) -> None:
         user = await self.repo.get_by_id(user_id)
         if not user:
-            raise ValueError("User not found")
+            raise ValueError(f"Пользователь c id: {user_id} не найден")
         await self.repo.delete(user)

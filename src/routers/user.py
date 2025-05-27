@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from src.schemas.user import UserCreate, UserResponse, UserIdSchema
+from src.schemas.user import UserCreate, UserResponse, UserId
 from src.models import User
 from src.core.dependencies import UserServiceDepends
 
@@ -9,10 +9,10 @@ router = APIRouter(prefix="/users", tags=["users"])
 @router.get("/{user_id}", response_model=UserResponse)
 async def get_user(user_id: int, service: UserServiceDepends) -> User:
     try:
-        user_id = UserIdSchema(user_id=user_id)
+        user = UserId(id=user_id)
     except ValueError as e:
         raise HTTPException(status_code=422, detail=str(e))
-    user = await service.get_user(user_id)
+    user = await service.get_user(user.id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user

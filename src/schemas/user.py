@@ -10,7 +10,7 @@ class UserCreate(BaseModel):
     @field_validator("email")
     def validate_email(cls, value):
         if "@" not in value:
-            raise ValueError("Invalid email")
+            raise ValueError(f"Неверный email: {value}")
         return value
 
 
@@ -28,6 +28,6 @@ class UserResponse(BaseModel):
         from_attributes = True
 
 
-class UserIdSchema(IdValidationMixin, BaseModel):
-    user_id: int
-    __id_fields__ = ["user_id"]
+class UserId(IdValidationMixin, BaseModel):
+    id: int
+    __id_fields__ = ["id"]
