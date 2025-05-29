@@ -7,7 +7,7 @@ from src.routers.base import router
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI):  # noqa
     """
     Выполняется при запуске и остановке приложения.
     """

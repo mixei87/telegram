@@ -21,7 +21,10 @@ class ChatService:
         return chat
 
     async def get_chat(self, chat_id: int) -> Chat | None:
-        return await self.chat_repo.get_by_id_with_members(chat_id)
+        return await self.chat_repo.get_chat_by_id(chat_id)
+
+    async def get_chat_with_members(self, chat_id: int) -> Chat | None:
+        return await self.chat_repo.get_chat_by_id_with_members(chat_id)
 
     async def add_user_to_chat(self, chat_id: int, user_id: int) -> None:
         await self.chat_member_service.add_user_to_chat(chat_id, user_id)

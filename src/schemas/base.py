@@ -16,10 +16,10 @@ class IdValidationMixin(BaseModel):
         return self
 
 
-class NameValidationMixin(BaseModel):
+class NotBlankStrValidationMixin(BaseModel):
     @model_validator(mode="after")
     def validate_id_fields(self):
-        fields_to_check = getattr(self, "__name_fields__", [])
+        fields_to_check = getattr(self, "__str_fields__", [])
         for field_name in fields_to_check:
             value = getattr(self, field_name)
             if not isinstance(value, str):

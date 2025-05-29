@@ -13,7 +13,7 @@ async def get_user(user_id: int, service: UserServiceDepends) -> User:
     except ValueError as e:
         raise HTTPException(status_code=422, detail=str(e))
     user = await service.get_user(user.id)
-    if not user:
+    if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return user
 

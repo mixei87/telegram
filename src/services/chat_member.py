@@ -28,3 +28,7 @@ class ChatMemberService:
 
     async def get_group_with_members(self, group_id: int) -> Group | None:
         return await self.chat_member_repo.get_group_with_members(group_id)
+
+    async def is_user_in_chat(self, chat_id: int, user_id: int) -> bool:
+        chat = await self.get_chat_with_members(chat_id)
+        return chat is not None and any(member.id == user_id for member in chat.members)

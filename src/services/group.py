@@ -1,6 +1,6 @@
 from src.repositories.chat import ChatRepository
 from src.repositories.group import GroupRepository
-from src.services.chat_member import ChatMemberRepository, ChatMemberService
+from src.services.chat_member import ChatMemberService
 from src.services.user import UserService
 from src.models import Group, Chat, ChatType
 

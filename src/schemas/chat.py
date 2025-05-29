@@ -2,15 +2,15 @@ from pydantic import BaseModel
 
 from src.models import ChatType
 from src.schemas.user import UserResponse
-from src.schemas.base import IdValidationMixin, NameValidationMixin
+from src.schemas.base import IdValidationMixin, NotBlankStrValidationMixin
 
 
-class ChatPersonalCreate(NameValidationMixin, BaseModel):
+class ChatPersonalCreate(NotBlankStrValidationMixin, BaseModel):
     name: str
     __name_fields__ = ["name"]
 
 
-class ChatGroupCreate(NameValidationMixin, IdValidationMixin, BaseModel):
+class ChatGroupCreate(NotBlankStrValidationMixin, IdValidationMixin, BaseModel):
     name: str
     creator_id: int
     __name_fields__ = ["name"]

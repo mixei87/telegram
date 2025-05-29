@@ -31,7 +31,7 @@ async def get_chat(chat_id: int, service: ChatServiceDepends) -> Chat:
         chat = ChatId(id=chat_id)
     except ValueError as e:
         raise HTTPException(status_code=422, detail=str(e))
-    chat = await service.get_chat(chat.id)
+    chat = await service.get_chat_with_members(chat.id)
     if chat is None:
         raise HTTPException(status_code=404, detail=f"Чат с id: {chat_id} не найден")
     return chat

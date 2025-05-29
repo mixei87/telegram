@@ -15,7 +15,10 @@ class ChatRepository:
         await self.session.flush()
         return chat
 
-    async def get_by_id_with_members(self, chat_id: int) -> Chat | None:
+    async def get_chat_by_id(self, chat_id: int) -> Chat | None:
+        return await self.session.get(Chat, chat_id)
+
+    async def get_chat_by_id_with_members(self, chat_id: int) -> Chat | None:
         stmt = (select(Chat).where(Chat.id == chat_id).options(joinedload(Chat.members)))
         result = await self.session.execute(stmt)
         return result.unique().scalars().first()
