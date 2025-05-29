@@ -11,6 +11,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копируем исходный код
 COPY src ./src
 COPY .env .
+COPY alembic.ini .
 
 # Копирование entrypoint.sh и добавление прав на выполнение
 COPY entrypoint.sh .
