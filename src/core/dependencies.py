@@ -11,6 +11,8 @@ from src.services.user import UserService
 from src.services.chat import ChatService
 from src.services.chat_member import ChatMemberService
 from src.services.group import GroupService
+from src.repositories.message import MessageRepository
+from src.services.message import MessageService
 
 
 def get_chat_repository(session: AsyncSession = Depends(get_async_session)) -> ChatRepository:
@@ -46,7 +48,16 @@ def get_chat_service(session: AsyncSession = Depends(get_async_session),
     return ChatService(ChatRepository(session), chat_member_service, group_service)
 
 
+def get_message_service(session: AsyncSession = Depends(get_async_session),
+                        chat_service: ChatService = Depends(get_chat_service),
+                        user_service: UserService = Depends(get_user_service),
+                        chat_member_service: ChatMemberService = Depends(get_chat_member_service)
+                        ) -> MessageService:
+    return MessageService(MessageRepository(session), chat_service, user_service, chat_member_service)
+
+
 UserServiceDepends = Annotated[UserService, Depends(get_user_service)]
 ChatServiceDepends = Annotated[ChatService, Depends(get_chat_service)]
 GroupServiceDepends = Annotated[GroupService, Depends(get_group_service)]
 ChatMemberServiceDepends = Annotated[ChatMemberService, Depends(get_chat_member_service)]
+MessageServiceDepends = Annotated[MessageService, Depends(get_message_service)]
