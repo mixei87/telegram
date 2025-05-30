@@ -1,11 +1,14 @@
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
+from random import choice, randint, sample
+from uuid import uuid4
 
 from src.repositories.message import MessageRepository
 from src.models import Message
 from src.services.chat import ChatService
 from src.services.chat_member import ChatMemberService
 from src.services.user import UserService
+from src.models.base import ChatType
 
 
 class MessageService:
@@ -39,3 +42,33 @@ class MessageService:
         )
         result = await self.message_repo.session.execute(stmt)
         return list(result.scalars().all())
+
+    async def create_test_data(self):
+        users = [await self.user_service.create_user(name=f"User{i}", email=f"user{i}@example.com",
+                                                     hashed_password="password") for i in range(7)]
+
+        chats = []
+        for i in range(5):
+            chat = await self.chat_service.create_personal_chat(name=f"Chat {i}")
+            chats.append(chat)
+
+        for i in range(5, 10):
+            chat = await self.chat_service.create_group_chat(name=f"Chat {i}", creator_id=choice(users).id)
+            chats.append(chat)
+
+        for chat in chats:
+            if chat.type == ChatType.PERSONAL:
+                number_users = 2
+            else:
+                number_users = randint(3, 4)
+            for user in sample(users, number_users):
+                await self.chat_member_service.add_user_to_chat(chat.id, user.id)
+
+        for _ in range(20):
+            chat = choice(chats)
+            await self.chat_member_service.get_chat_with_members(chat.id)
+            sender = choice(chat.members)
+            await self.message_repo.create(external_id=str(uuid4()), chat_id=chat.id, sender_id=sender.id,
+                                           text=f"Message from {sender.name} in {chat.name}")
+
+        print("Test data created successfully!")

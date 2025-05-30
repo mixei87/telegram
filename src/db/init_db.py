@@ -1,7 +1,6 @@
 from sqlalchemy import inspect, text
 
 from src.models.base import Base
-from src.db.create_test_data import create_test_data
 from src.db.session import engine
 
 
@@ -20,7 +19,6 @@ async def init_db():
             await conn.run_sync(Base.metadata.create_all)
             await conn.commit()
             print("Database tables created successfully!")
-            await create_test_data()
         else:
             print("Tables already exist. Skipping creation.")
         print("Startup completed. Database tables are ready!")
