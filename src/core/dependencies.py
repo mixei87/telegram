@@ -17,45 +17,84 @@ from src.services.message import MessageService
 SesionDepends = Annotated[AsyncSession, Depends(get_async_session)]
 
 
-def get_chat_repository(session: SesionDepends) -> ChatRepository:
+def get_chat_repo(session: SesionDepends) -> ChatRepository:
     return ChatRepository(session)
 
 
-def get_chat_member_repository(session: SesionDepends) -> ChatMemberRepository:
+def get_group_repo(session: SesionDepends) -> GroupRepository:
+    return GroupRepository(session)
+
+
+def get_chat_member_repo(session: SesionDepends) -> ChatMemberRepository:
     return ChatMemberRepository(session)
 
 
-def get_user_service(session: SesionDepends) -> UserService:
-    return UserService(UserRepository(session))
+def get_user_repo(session: SesionDepends) -> UserRepository:
+    return UserRepository(session)
 
 
-def get_chat_member_service(session: SesionDepends,
-                            chat_repo: ChatRepository = Depends(get_chat_repository),
-                            user_service: UserService = Depends(get_user_service)
-                            ) -> ChatMemberService:
-    return ChatMemberService(chat_repo, ChatMemberRepository(session), user_service)
+def get_message_repo(session: SesionDepends) -> MessageRepository:
+    return MessageRepository(session)
 
 
-def get_group_service(session: SesionDepends,
-                      get_chat_repository: ChatRepository = Depends(get_chat_repository),
-                      chat_member_service: ChatMemberService = Depends(get_chat_member_service),
-                      user_service: UserService = Depends(get_user_service)
-                      ) -> GroupService:
-    return GroupService(GroupRepository(session), get_chat_repository, chat_member_service, user_service)
+def get_user_service(user_repo: UserRepository = Depends(get_user_repo)) -> UserService:
+    return UserService(user_repo)
 
 
-def get_chat_service(session: SesionDepends,
-                     chat_member_service: ChatMemberService = Depends(get_chat_member_service),
-                     group_service: GroupService = Depends(get_group_service)) -> ChatService:
-    return ChatService(ChatRepository(session), chat_member_service, group_service)
+def get_chat_member_service(
+        chat_member_repo: ChatMemberRepository = Depends(get_chat_member_repo),
+        user_service: UserService = Depends(get_user_service)
+) -> ChatMemberService:
+    return ChatMemberService(
+        chat_member_repo,
+        user_service
+    )
 
 
-def get_message_service(session: SesionDepends,
-                        chat_service: ChatService = Depends(get_chat_service),
-                        user_service: UserService = Depends(get_user_service),
-                        chat_member_service: ChatMemberService = Depends(get_chat_member_service)
-                        ) -> MessageService:
-    return MessageService(MessageRepository(session), chat_service, user_service, chat_member_service)
+def get_group_service(
+        group_repo: GroupRepository = Depends(get_group_repo),
+        chat_repo: ChatRepository = Depends(get_chat_repo),
+        chat_member_repo: ChatMemberRepository = Depends(get_chat_member_repo),
+        chat_member_service: ChatMemberService = Depends(get_chat_member_service),
+        user_service: UserService = Depends(get_user_service)
+) -> GroupService:
+    return GroupService(
+        group_repo,
+        chat_repo,
+        chat_member_repo,
+        chat_member_service,
+        user_service
+    )
+
+
+def get_chat_service(
+        chat_repo: ChatRepository = Depends(get_chat_repo),
+        chat_member_repo: ChatMemberRepository = Depends(get_chat_member_repo),
+        user_service: UserService = Depends(get_user_service),
+        chat_member_service: ChatMemberService = Depends(get_chat_member_service),
+        group_service: GroupService = Depends(get_group_service)
+) -> ChatService:
+    return ChatService(
+        chat_repo,
+        chat_member_repo,
+        user_service,
+        chat_member_service,
+        group_service
+    )
+
+
+def get_message_service(
+        message_repo: MessageRepository = Depends(get_message_repo),
+        chat_service: ChatService = Depends(get_chat_service),
+        user_service: UserService = Depends(get_user_service),
+        chat_member_service: ChatMemberService = Depends(get_chat_member_service)
+) -> MessageService:
+    return MessageService(
+        message_repo,
+        chat_service,
+        user_service,
+        chat_member_service
+    )
 
 
 UserServiceDepends = Annotated[UserService, Depends(get_user_service)]
