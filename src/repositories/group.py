@@ -22,6 +22,6 @@ class GroupRepository:
         result = await self.session.execute(stmt)
         return result.unique().scalars().first()
 
-    async def add_creator(self, group: Group, creator: User) -> None:
+    async def set_creator(self, group: Group, creator: User) -> None:
         group.creator = creator
         await self.session.flush()

@@ -8,8 +8,7 @@ router = APIRouter(prefix="/groups", tags=["groups"])
 @router.post("/", response_model=GroupResponse)
 async def create_group(data: GroupCreate, service: GroupServiceDepends):
     try:
-        chat = await service.create_chat(data.name)
-        group = await service.create_group(chat, data.creator_id)
+        group = await service.create_group(data.name, data.creator_id)
         return group
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
