@@ -13,6 +13,7 @@ RUN pip install -r requirements.txt
 COPY src ./src
 COPY .env .
 COPY alembic.ini .
+COPY tests ./tests
 
 # Копирование entrypoint.sh и добавление прав на выполнение
 COPY entrypoint.sh .
