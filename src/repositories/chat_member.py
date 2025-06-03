@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 from sqlalchemy import select
 
-from src.models import Chat, Group
+from src.models import Chat, Group, User, ChatMember
 
 
 class ChatMemberRepository:
@@ -26,3 +26,7 @@ class ChatMemberRepository:
         )
         result = await self.session.execute(stmt)
         return result.scalars().first()
+
+    async def add_member(self, chat: Chat, user: User) -> None:
+        self.session.add(ChatMember(chat_id=chat.id, user_id=user.id))
+        await self.session.flush()
