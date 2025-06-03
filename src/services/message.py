@@ -3,6 +3,7 @@ from sqlalchemy.orm import joinedload
 from random import choice, randint, sample
 from uuid import uuid4
 
+from src.core.exceptions import NotFoundError
 from src.repositories.message import MessageRepository
 from src.models import Message
 from src.services.chat import ChatService
@@ -20,14 +21,12 @@ class MessageService:
         self.chat_member_service = chat_member_service
 
     async def create_message(self, external_id: str, chat_id: int, sender_id: int, text: str) -> Message | None:
-        if await self.chat_service.get_chat(chat_id) is None:
-            raise ValueError(f"Чат с id: {chat_id} не найден")
-        if await self.user_service.get_user(sender_id) is None:
-            raise ValueError(f"Пользователь с id: {sender_id} не найден")
+        await self.chat_service.get_exist_chat(chat_id)
+        await self.user_service.get_exist_user(sender_id)
 
         # Проверяем, может ли пользователь писать в этот чат
         if not await self.chat_member_service.is_user_in_chat(chat_id, sender_id):
-            raise ValueError("Пользователь не состоит в чате")
+            raise NotFoundError("Пользователь не состоит в чате")
 
         return await self.message_repo.create(external_id, chat_id, sender_id, text)
 
@@ -49,7 +48,8 @@ class MessageService:
 
         chats = []
         for i in range(5):
-            chat = await self.chat_service.create_personal_chat(name=f"Chat {i}")
+            users_in_chat = sample(users, 2)
+            chat = await self.chat_service.create_personal_chat(users_in_chat[0].id, users_in_chat[1].id)
             chats.append(chat)
 
         for i in range(5, 10):
