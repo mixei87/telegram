@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, ConfigDict
 from src.schemas.base import IdValidationMixin
 
 
@@ -24,8 +24,7 @@ class UserResponse(BaseModel):
     name: str
     email: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserId(IdValidationMixin, BaseModel):
