@@ -40,6 +40,30 @@ async def create_async_sessionmaker(create_test_engine):
     return async_sessionmaker(bind=create_test_engine, expire_on_commit=False)
 
 
+async def reset_sequences(session: AsyncSession):
+    """Сбрасывает все последовательности в базе данных на 1."""
+    from sqlalchemy import text
+
+    # Получаем список всех последовательностей
+    result = await session.execute(
+        text("""
+        SELECT sequence_schema, sequence_name 
+        FROM information_schema.sequences 
+        WHERE sequence_schema = 'public';
+        """)
+    )
+
+    # Сбрасываем каждую последовательность на 1
+    for schema, seq_name in result:
+        # Формируем полное имя последовательности
+        seq_ident = f'"{schema}"."{seq_name}"' if schema else f'"{seq_name}"'
+        await session.execute(
+            text(f"ALTER SEQUENCE {seq_ident} RESTART WITH 1")
+        )
+
+    await session.commit()
+
+
 @pytest_asyncio.fixture(scope="function")
 async def db_session(create_tables, create_async_sessionmaker):
     async with create_async_sessionmaker() as session:
@@ -47,6 +71,7 @@ async def db_session(create_tables, create_async_sessionmaker):
             yield session
         finally:
             await session.rollback()
+            await reset_sequences(session)
             await session.close()
             await session.bind.dispose()
 
@@ -82,18 +107,18 @@ def user_service(user_repo):
 
 
 @pytest_asyncio.fixture(scope="function")
-def chat_member_service(chat_repo, chat_member_repo, user_service):
-    return ChatMemberService(chat_repo, chat_member_repo, user_service)
+def chat_member_service(chat_member_repo, user_service):
+    return ChatMemberService(chat_member_repo, user_service)
 
 
 @pytest_asyncio.fixture(scope="function")
-def group_service(group_repo, chat_repo, chat_member_service, user_service):
-    return GroupService(group_repo, chat_repo, chat_member_service, user_service)
+def group_service(group_repo, chat_repo, chat_member_repo, chat_member_service, user_service):
+    return GroupService(group_repo, chat_repo, chat_member_repo, chat_member_service, user_service)
 
 
 @pytest_asyncio.fixture(scope="function")
-def chat_service(chat_repo, chat_member_service, group_service):
-    return ChatService(chat_repo, chat_member_service, group_service)
+def chat_service(chat_repo, chat_member_repo, user_service, chat_member_service, group_service):
+    return ChatService(chat_repo, chat_member_repo, user_service, chat_member_service, group_service)
 
 
 @pytest_asyncio.fixture(scope="function")
