@@ -28,6 +28,12 @@ class GroupService:
     async def get_group(self, group_id: int) -> Group | None:
         return await self.chat_member_service.get_group_with_members(group_id)
 
+    async def get_group_with_members(self, group_id: int) -> Group | None:
+        group = await self.group_repo.get_by_id_with_members(group_id)
+        if group is None:
+            raise NotFoundError(f"Группа с id: {group_id} не найдена")
+        return group
+
     async def _create_chat(self, name: str) -> Chat:
         return await self.chat_repo.create_chat(name, ChatType.GROUP)
 
@@ -36,9 +42,3 @@ class GroupService:
 
     async def is_user_in_group(self, group_id: int, user_id: int) -> bool:
         return await self.chat_member_service.is_user_in_chat(group_id, user_id)
-
-    async def get_group_with_members(self, group_id: int) -> Group | None:
-        group = await self.group_repo.get_by_id_with_members(group_id)
-        if group is None:
-            raise NotFoundError(f"Группа с id: {group_id} не найдена")
-        return group

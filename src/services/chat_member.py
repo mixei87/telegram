@@ -19,7 +19,6 @@ class ChatMemberService:
             raise NotFoundError(f"Пользователь c id: {user_id} не найден")
         if any(member.id == user.id for member in chat.members):
             raise AlreadyExistsError(f"Пользователь c id: {user_id} уже состоит в чате")
-
         await self.chat_member_repo.add_member(chat, user)
 
     async def get_chat_with_members(self, chat_id: int) -> Chat | None:

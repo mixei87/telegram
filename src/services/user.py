@@ -18,5 +18,5 @@ class UserService:
     async def get_exist_user(self, user_id: int) -> User:
         user = await self.repo.get_by_id(user_id)
         if not user:
-            raise NotFoundError(f"Пользователь c id: {user_id} не найден")
+            raise NotFoundError(f"Пользователь с id: {user_id} не найден")
         return user

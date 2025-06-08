@@ -19,7 +19,7 @@ class ChatService:
 
     async def create_personal_chat(self, creator_id: int, friend_id: int) -> Chat:
         if creator_id == friend_id:
-            raise LogicError("Нельзя создать персональный чат с самим собой")
+            raise LogicError("Нельзя создать персональный чат с самим собой")
 
         creator: User = await self.user_service.get_exist_user(creator_id)
         friend: User = await self.user_service.get_exist_user(friend_id)
@@ -31,7 +31,7 @@ class ChatService:
 
     async def create_group_chat(self, name: str, creator_id: int) -> Chat:
         group = await self.group_service.create_group(name, creator_id=creator_id)
-        return group.chat
+        return await self.get_chat(group.id)
 
     async def get_chat(self, chat_id: int) -> Chat | None:
         return await self.chat_repo.get_chat_by_id(chat_id)
