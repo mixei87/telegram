@@ -1,24 +1,24 @@
-from uuid import UUID
-
-from pydantic import BaseModel, field_validator
-from src.schemas.base import IdValidationMixin, NotBlankStrValidationMixin
+from pydantic import BaseModel
+from src.schemas.base import IdValidationMixin, UUIDValidationMixin, NotBlankStrValidationMixin
 
 
-class MessageCreate(IdValidationMixin, NotBlankStrValidationMixin, BaseModel):
-    __id_fields__ = ["chat_id", "sender_id"]
-    __str_fields__ = ["text"]
+class MessageCreateHttp(BaseModel, UUIDValidationMixin, IdValidationMixin, NotBlankStrValidationMixin):
     external_id: str
     chat_id: int
     sender_id: int
     text: str
 
-    @field_validator("external_id")
-    def validate_external_id(cls, value: str) -> str:
-        try:
-            UUID(value, version=4)
-        except ValueError:
-            raise ValueError("external_id должен быть валидным UUIDv4")
-        return value
+    __uuid_fields__ = ["external_id"]
+    __id_fields__ = ["chat_id", "sender_id"]
+    __str_fields__ = ["text"]
+
+
+class MessageCreateWS(BaseModel, UUIDValidationMixin, NotBlankStrValidationMixin):
+    external_id: str
+    text: str
+
+    __uuid_fields__ = ["external_id"]
+    __str_fields__ = ["text"]
 
 
 class MessageResponse(BaseModel):

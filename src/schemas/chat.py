@@ -5,26 +5,29 @@ from src.schemas.user import UserResponse
 from src.schemas.base import IdValidationMixin, NotBlankStrValidationMixin
 
 
-class ChatPersonalCreate(NotBlankStrValidationMixin, BaseModel):
-    name: str
-    __name_fields__ = ["name"]
+class ChatPersonalCreate(BaseModel, IdValidationMixin):
+    creator_id: int
+    friend_id: int
+    __id_fields__ = ["creator_id", "friend_id"]
 
 
-class ChatGroupCreate(NotBlankStrValidationMixin, IdValidationMixin, BaseModel):
+class ChatGroupCreate(BaseModel, NotBlankStrValidationMixin, IdValidationMixin):
     name: str
     creator_id: int
-    __name_fields__ = ["name"]
+    __str_fields__ = ["name"]
     __id_fields__ = ["creator_id"]
 
 
-class ChatId(IdValidationMixin, BaseModel):
+class ChatId(BaseModel, IdValidationMixin):
     id: int
+
     __id_fields__ = ["id"]
 
 
-class ChatMember(IdValidationMixin, BaseModel):
+class ChatMember(BaseModel, IdValidationMixin):
     chat_id: int
     user_id: int
+
     __id_fields__ = ["chat_id", "user_id"]
 
 

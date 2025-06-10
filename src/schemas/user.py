@@ -1,11 +1,12 @@
 from pydantic import BaseModel, field_validator, ConfigDict
-from src.schemas.base import IdValidationMixin
+from src.schemas.base import IdValidationMixin, NotBlankStrValidationMixin
 
 
-class UserCreate(BaseModel):
+class UserCreate(BaseModel, NotBlankStrValidationMixin):
     name: str
     email: str
     password: str
+    __str_fields__ = ["name", "email", "password"]
 
     @field_validator("email")
     def validate_email(cls, value):
@@ -14,9 +15,9 @@ class UserCreate(BaseModel):
         return value
 
 
-class UserUpdate(BaseModel):
-    name: str | None = None
-    hashed_password: str | None = None
+class UserId(BaseModel, IdValidationMixin):
+    id: int
+    __id_fields__ = ["id"]
 
 
 class UserResponse(BaseModel):
@@ -25,8 +26,3 @@ class UserResponse(BaseModel):
     email: str
 
     model_config = ConfigDict(from_attributes=True)
-
-
-class UserId(IdValidationMixin, BaseModel):
-    id: int
-    __id_fields__ = ["id"]
