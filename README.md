@@ -6,3 +6,11 @@
 
 - Host в контейнере - db
 - Host в локальном окружении - localhost
+
+## Тесты
+
+Запустите тесты с помощью команды:
+
+```bash
+docker compose run --rm app pytest tests -v
+```
