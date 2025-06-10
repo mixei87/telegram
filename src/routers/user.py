@@ -9,9 +9,8 @@ router = APIRouter(prefix="/users", tags=["users"])
 @router.post("/", response_model=UserResponse)
 async def create_user(data: UserCreate, service: UserServiceDepends) -> User:
     try:
-        user = await service.create_user(data.name, data.email, data.password)
-        return user
-    except ValueError as e:
+        return await service.create_user(data.name, data.email, data.password)
+    except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 
@@ -19,7 +18,7 @@ async def create_user(data: UserCreate, service: UserServiceDepends) -> User:
 async def get_user(user_id: int, service: UserServiceDepends) -> User:
     try:
         user = UserId(id=user_id)
-    except ValueError as e:
+    except Exception as e:
         raise HTTPException(status_code=422, detail=str(e))
     user = await service.get_user(user.id)
     if user is None:
