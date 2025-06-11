@@ -20,3 +20,7 @@ class UserService:
         if not user:
             raise NotFoundError(f"Пользователь с id: {user_id} не найден")
         return user
+
+    async def get_user_by_token(self, token) -> User:
+        # TODO: заглушка выбор юзера с id = 15
+        return await self.get_user(15)
