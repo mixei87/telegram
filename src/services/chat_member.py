@@ -5,7 +5,9 @@ from src.services.user import UserService
 
 
 class ChatMemberService:
-    def __init__(self, chat_member_repo: ChatMemberRepository, user_service: UserService):
+    def __init__(
+        self, chat_member_repo: ChatMemberRepository, user_service: UserService
+    ):
         self.chat_member_repo = chat_member_repo
         self.user_service = user_service
 

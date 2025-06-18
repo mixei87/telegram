@@ -1,6 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.models import User
+
+from src.models import Chat, ChatMember, User
 
 
 class UserRepository:
@@ -30,3 +31,12 @@ class UserRepository:
     async def delete(self, user: User) -> None:
         await self.session.delete(user)
         await self.session.flush()
+
+    async def get_chats_by_user_id(self, user_id: int) -> list[Chat]:
+        stmt = (
+            select(Chat)
+            .join(ChatMember, Chat.id == ChatMember.chat_id)
+            .where(ChatMember.user_id == user_id)
+        )
+        result = await self.session.execute(stmt)
+        return list(result.scalars().all())

@@ -10,10 +10,14 @@ class MessageRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def create(self, external_id: str, chat_id: int, sender_id: int, text: str) -> Message | None:
+    async def create(
+        self, external_id: str, chat_id: int, sender_id: int, text: str
+    ) -> Message | None:
         stmt = (
             pg_insert(Message)
-            .values(external_id=external_id, chat_id=chat_id, sender_id=sender_id, text=text)
+            .values(
+                external_id=external_id, chat_id=chat_id, sender_id=sender_id, text=text
+            )
             .on_conflict_do_nothing(index_elements=["external_id"])
             .returning(Message)
         )

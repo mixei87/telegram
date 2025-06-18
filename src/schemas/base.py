@@ -1,6 +1,10 @@
+from typing import Annotated
 from uuid import UUID
 
+from fastapi import Path
 from pydantic import model_validator
+
+PositiveIntID = Annotated[int, Path(ge=0, le=2_147_483_647)]
 
 
 class IdValidationMixin:

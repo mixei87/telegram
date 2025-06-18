@@ -23,6 +23,3 @@ class UserId(BaseModel, IdValidationMixin):
 class UserResponse(BaseModel):
     id: int
     name: str
-    email: str
-
-    model_config = ConfigDict(from_attributes=True)

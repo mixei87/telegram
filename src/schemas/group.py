@@ -1,6 +1,7 @@
 from pydantic import BaseModel
-from src.schemas.user import UserResponse
+
 from src.schemas.base import IdValidationMixin, NotBlankStrValidationMixin
+from src.schemas.user import UserResponse
 
 
 class GroupCreate(BaseModel, IdValidationMixin, NotBlankStrValidationMixin):
@@ -9,12 +10,6 @@ class GroupCreate(BaseModel, IdValidationMixin, NotBlankStrValidationMixin):
 
     __id_fields__ = ["creator_id"]
     __str_fields__ = ["name"]
-
-
-class GroupId(BaseModel):
-    id: int
-
-    __id_fields__ = ["id"]
 
 
 class GroupMember(BaseModel, IdValidationMixin):
@@ -29,9 +24,6 @@ class GroupResponse(BaseModel):
     name: str
     creator_id: int
 
-    class Config:
-        from_attributes = True
-
 
 class GroupMembersResponse(BaseModel):
     id: int
@@ -39,5 +31,8 @@ class GroupMembersResponse(BaseModel):
     creator_id: int
     members: list[UserResponse]
 
-    class Config:
-        from_attributes = True
+
+class GroupMemberResponse(BaseModel):
+    message: str = "Пользователь успешно добавлен в группу"
+    group_id: int
+    user_id: int

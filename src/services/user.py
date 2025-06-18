@@ -1,6 +1,6 @@
 from src.core.exceptions import AlreadyExistsError, NotFoundError
 from src.repositories.user import UserRepository
-from src.models import User
+from src.models import Chat, User
 
 
 class UserService:
@@ -24,3 +24,6 @@ class UserService:
     async def get_user_by_token(self, token) -> User:
         # TODO: заглушка выбор юзера с id = 15
         return await self.get_user(15)
+
+    async def get_chats_by_user_id(self, user_id: int) -> list[Chat]:
+        return await self.repo.get_chats_by_user_id(user_id)

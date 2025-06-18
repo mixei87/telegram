@@ -1,8 +1,14 @@
-from pydantic import BaseModel
-from src.schemas.base import IdValidationMixin, UUIDValidationMixin, NotBlankStrValidationMixin
+from pydantic import BaseModel, ConfigDict
+from src.schemas.base import (
+    IdValidationMixin,
+    UUIDValidationMixin,
+    NotBlankStrValidationMixin,
+)
 
 
-class MessageCreateHttp(BaseModel, UUIDValidationMixin, IdValidationMixin, NotBlankStrValidationMixin):
+class MessageCreateHttp(
+    BaseModel, UUIDValidationMixin, IdValidationMixin, NotBlankStrValidationMixin
+):
     external_id: str
     chat_id: int
     sender_id: int
@@ -22,11 +28,13 @@ class MessageCreateWS(BaseModel, UUIDValidationMixin, NotBlankStrValidationMixin
 
 
 class MessageResponse(BaseModel):
-    id: int
     chat_id: int
     sender_id: int
     text: str
     is_read: bool
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
+
+
+class MessageHistoryResponse(BaseModel):
+    messages: list[MessageResponse]

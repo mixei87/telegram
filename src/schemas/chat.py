@@ -1,6 +1,5 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
-from src.models import ChatType
 from src.schemas.user import UserResponse
 from src.schemas.base import IdValidationMixin, NotBlankStrValidationMixin
 
@@ -18,12 +17,6 @@ class ChatGroupCreate(BaseModel, NotBlankStrValidationMixin, IdValidationMixin):
     __id_fields__ = ["creator_id"]
 
 
-class ChatId(BaseModel, IdValidationMixin):
-    id: int
-
-    __id_fields__ = ["id"]
-
-
 class ChatMember(BaseModel, IdValidationMixin):
     chat_id: int
     user_id: int
@@ -34,17 +27,20 @@ class ChatMember(BaseModel, IdValidationMixin):
 class ChatResponse(BaseModel):
     id: int
     name: str
-    type: ChatType
+    model_config = ConfigDict(from_attributes=True)
 
-    class Config:
-        from_attributes = True
+
+class ChatsResponse(BaseModel):
+    chats: list[ChatResponse]
+
+
+class ChatMemberResponse(BaseModel):
+    message: str = "Пользователь успешно добавлен в чат"
+    chat_id: int
+    user_id: int
 
 
 class ChatWithMembersResponse(BaseModel):
     id: int
     name: str
-    type: ChatType
     members: list[UserResponse] | None
-
-    class Config:
-        from_attributes = True

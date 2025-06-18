@@ -1,10 +1,12 @@
-import uvicorn
 from contextlib import asynccontextmanager
+
+import uvicorn
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
+from src.core.handler_exceptions import register_exception_handlers
 from src.db.init_db import init_db
-from src.routers.base import router
+from src.routers.base import routers
 
 
 @asynccontextmanager
@@ -14,8 +16,10 @@ async def lifespan(app: FastAPI):  # noqa
 
 
 app = FastAPI(title="Messenger API", lifespan=lifespan)
-app.mount("/static", StaticFiles(directory="src/static"), name="static")
-app.include_router(router)
+app.mount("/static", StaticFiles(directory="static"), name="static")
+app.include_router(routers)
+
+register_exception_handlers(app)
 
 
 if __name__ == "__main__":
