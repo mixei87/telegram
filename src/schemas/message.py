@@ -20,6 +20,7 @@ class MessageCreateHttp(
 
 
 class MessageCreateWS(BaseModel, UUIDValidationMixin, NotBlankStrValidationMixin):
+    chat_id: int
     external_id: str
     text: str
 

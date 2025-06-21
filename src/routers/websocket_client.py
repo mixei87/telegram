@@ -8,4 +8,4 @@ router = APIRouter(prefix="/ws", tags=["WebSocket client"], include_in_schema=Fa
 
 @router.get("/client", response_class=HTMLResponse)
 async def show_ws_client(request: Request):
-    return templates.TemplateResponse("chat_ui.html", {"request": request})
+    return templates.TemplateResponse("chat.html", {"request": request})
