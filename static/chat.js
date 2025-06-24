@@ -1,107 +1,112 @@
-const connectBtn = document.getElementById("connectBtn");
-const chatList = document.getElementById("chatList");
-const userIdInput = document.getElementById("userIdInput");
+// Элементы интерфейса
 const messageList = document.querySelector('.message-list');
 const customScrollbar = document.getElementById('custom-scrollbar');
+let isMouseInWindow = false;
+let hideScrollbarTimeout = null;
 
-let isUserInteracting = false;
-
+/**
+ * Обновляет позицию и размер ползунка скроллбара
+ */
 function updateScrollbar() {
-    if (!customScrollbar) return;
+    if (!customScrollbar || !messageList) return;
 
-    const totalHeight = messageList.scrollHeight;
-    const visibleHeight = messageList.clientHeight;
-    const scrollTop = messageList.scrollTop;
+    const {scrollTop, scrollHeight, clientHeight} = messageList;
 
-    const thumbHeight = Math.max((visibleHeight / totalHeight) * visibleHeight, 20);
-    const thumbTop = (scrollTop / totalHeight) * visibleHeight;
+    // Вычисляем высоту ползунка (не менее 50px и не более высоты контейнера)
+    const thumbHeight = Math.max(
+        Math.min(
+            (clientHeight / scrollHeight) * clientHeight,
+            clientHeight
+        ),
+        50
+    );
 
+    // Вычисляем позицию ползунка
+    const maxScroll = scrollHeight - clientHeight;
+    const thumbPosition = maxScroll > 0
+        ? (scrollTop / maxScroll) * (clientHeight - thumbHeight)
+        : 0;
+
+    // Применяем стили
     customScrollbar.style.height = `${thumbHeight}px`;
-    customScrollbar.style.transform = `translateY(${thumbTop}px)`;
+    customScrollbar.style.transform = `translateY(${thumbPosition}px)`;
 }
 
-// Показываем скроллбар при скролле или наведении
+/**
+ * Показывает скроллбар
+ */
 function showScrollbar() {
     if (!customScrollbar) return;
+    clearTimeout(hideScrollbarTimeout);
     customScrollbar.style.opacity = "1";
-    clearTimeout(customScrollbar.hideTimeout);
 }
 
+/**
+ * Прячет скроллбар с задержкой, если курсор вне окна
+ */
 function hideScrollbar() {
     if (!customScrollbar) return;
-    customScrollbar.hideTimeout = setTimeout(() => {
-        customScrollbar.style.opacity = "0";
-    }, 300);
+
+    clearTimeout(hideScrollbarTimeout);
+
+    if (!isMouseInWindow) {
+        hideScrollbarTimeout = setTimeout(() => {
+            customScrollbar.style.opacity = "0";
+        }, 300);
+    }
 }
 
-// Отслеживаем события мыши
-function setupEventListenersForScrollbar() {
-    if (!messageList || !customScrollbar) return;
-
-    // При скролле обновляем позицию thumb
-    messageList.addEventListener("scroll", () => {
-        updateScrollbar();
-        showScrollbar();
-        hideScrollbar();
-    });
-
-    // При наведении на область чата
-    messageList.addEventListener("mouseenter", () => {
-        if (!isUserInteracting) showScrollbar();
-    });
-
-    messageList.addEventListener("mouseleave", () => {
-        if (!isUserInteracting) hideScrollbar();
-    });
-
-    // При движении мыши в окне
-    window.addEventListener("mousemove", (e) => {
-        const rect = messageList.getBoundingClientRect();
-        if (
-            e.clientX >= rect.left &&
-            e.clientX <= rect.right &&
-            e.clientY >= rect.top &&
-            e.clientY <= rect.bottom
-        ) {
-            showScrollbar();
-            hideScrollbar();
-        }
-    });
-
-    // При уходе мыши за пределы окна
-    window.addEventListener("mouseout", (e) => {
-        if (e.relatedTarget === null) {
-            hideScrollbar();
-        }
-    });
-
-    // Для тач-устройств
-    messageList.addEventListener("touchstart", () => {
-        showScrollbar();
-        hideScrollbar();
-    });
-}
-
-// Инициализация
+/**
+ * Инициализирует скроллбар и настраивает обработчики событий
+ */
 function initScrollbar() {
     if (!messageList || !customScrollbar) return;
 
+    // Начальная настройка стилей
     customScrollbar.style.position = "absolute";
     customScrollbar.style.width = "6px";
     customScrollbar.style.top = "0";
     customScrollbar.style.right = "0";
+    customScrollbar.style.opacity = "0";
+    customScrollbar.style.transition = "opacity 0.3s ease";
 
+    // Обработчики событий
+    messageList.addEventListener("scroll", () => {
+        updateScrollbar();
+        showScrollbar();
+    });
+
+    messageList.addEventListener("mouseenter", showScrollbar);
+    messageList.addEventListener("mouseleave", hideScrollbar);
+
+    window.addEventListener("mousemove", () => {
+        showScrollbar();
+        hideScrollbar();
+    });
+
+    window.addEventListener("mouseout", (e) => {
+        if (e.relatedTarget === null) {
+            isMouseInWindow = false;
+            hideScrollbar();
+        }
+    });
+
+    window.addEventListener("mouseover", () => {
+        isMouseInWindow = true;
+    });
+
+    // Для тач-устройств
+    messageList.addEventListener("touchstart", showScrollbar);
+    messageList.addEventListener("touchend", hideScrollbar);
+
+    window.addEventListener("resize", updateScrollbar);
+
+    // Инициализация начального состояния
     updateScrollbar();
-
-    setupEventListenersForScrollbar();
 }
 
-// Вызывай после загрузки чата
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initScrollbar);
-} else {
-    initScrollbar();
-}
+// Запуск инициализации после загрузки DOM
+document.addEventListener('DOMContentLoaded', initScrollbar);
 // // Проверяем, является ли браузер Chrome
 // const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
 //
@@ -228,7 +233,6 @@ function connectWebSocket(user_id) {
     };
     ws.onclose = () => {
         console.log("Соединение закрыто");
-        connectBtn.textContent = "Connect";
     };
 }
 

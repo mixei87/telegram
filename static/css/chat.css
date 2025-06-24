@@ -10,8 +10,7 @@ body {
     font-family: sans-serif;
     display: flex;
     min-height: 100vh;
-    background-size: cover;
-    background: #e5ddd5 url('/static/chat-bg-pattern.png') fixed center;
+    background: #e5ddd5 url('/static/background10.png') fixed center;
 }
 
 #app {
@@ -54,36 +53,47 @@ body {
 .message-list {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     gap: 12px;
     position: relative;
     padding: 20px 15%;
-    /*scrollbar-width: thin;*/
-    /*scrollbar-color: transparent transparent;*/
-    /*--scrollbar-opacity: 0;*/
-    /*--scrollbar-color: #00000080;*/
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    overscroll-behavior: contain; /* Prevent pull-to-refresh */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
 
-/* Контейнер для кастомного скроллбара */
-.scrollbar-container {
+/* Hide scrollbar for all browsers */
+.message-list::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+/* Custom scrollbar thumb */
+#custom-scrollbar {
     position: absolute;
-    right: 0;
+    right: 2px;
     top: 0;
     width: 6px;
-    height: 100%;
-    pointer-events: none;
-    z-index: 10;
-}
-
-.scrollbar-thumb {
-    position: absolute;
-    right: 0;
-    background-color: rgba(0, 0, 0, 0.2);
-    width: 6px;
     border-radius: 3px;
+    background-color: rgba(0, 0, 0, 0.3);
     opacity: 0;
     transition: opacity 0.3s ease;
+    pointer-events: none;
+    will-change: transform, opacity;
+    z-index: 1000;
+}
+
+/* Prevent text selection when dragging scrollbar */
+#custom-scrollbar::selection {
+    background: transparent;
+}
+
+#custom-scrollbar::-moz-selection {
+    background: transparent;
 }
 
 /*!* Стили для WebKit (Chrome, Edge, Safari) *!*/
