@@ -6,7 +6,7 @@ from src.schemas.base import (
 )
 
 
-class MessageCreateHttp(
+class MessageCreate(
     BaseModel, UUIDValidationMixin, IdValidationMixin, NotBlankStrValidationMixin
 ):
     external_id: str

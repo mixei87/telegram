@@ -4,7 +4,7 @@ from src.schemas.base import PositiveIntID
 from src.core.exceptions import NotFoundError, AlreadyExistsError
 from src.core.dependencies import MessageServiceDepends
 from src.schemas.message import (
-    MessageCreateHttp,
+    MessageCreate,
     MessageResponse,
     MessageHistoryResponse,
 )
@@ -13,11 +13,9 @@ router = APIRouter(tags=["messages"])
 
 
 @router.post("/messages/", response_model=MessageResponse)
-async def send_message(data: MessageCreateHttp, service: MessageServiceDepends):
+async def send_message(data: MessageCreate, service: MessageServiceDepends):
     try:
-        message = await service.create_message(
-            data.external_id, data.chat_id, data.sender_id, data.text
-        )
+        message = await service.create_message(data)
         if message is None:
             raise AlreadyExistsError("Сообщение уже существует")
         return message
