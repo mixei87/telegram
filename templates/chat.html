@@ -1,32 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8"/>
-    <title>Chat UI</title>
-    <link rel="stylesheet" href="/static/css/chat.css"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чат</title>
+    <link rel="stylesheet" href="/static/css/scrollbar.css">
+    <link rel="stylesheet" href="/static/css/chat.css">
+    <script>
+        window.APP_CONFIG = {
+            WS_URL: "{{ config.get('WS_URL') }}"
+        };
+    </script>
 </head>
 <body>
 <div id="app">
     <div class="chat-list">
-        <label for="userIdInput"></label>
-        <input type="text" id="userIdInput" value="15" placeholder="ID пользователя"/>
-        <button id="connectBtn" onclick="loadChats()">Загрузить чаты</button>
-        <div class="chat-list-header">Чаты</div>
+        <div class="chat-list-header">
+            <div class="user-input-container">
+                <input
+                        type="text"
+                        id="userIdInput"
+                        value="15"
+                        placeholder="ID пользователя"
+                        class="user-id-input"
+                        aria-label="ID пользователя"
+                >
+                <button id="connectBtn" class="load-chats-btn" aria-label="Загрузить чаты">
+                    Загрузить чаты
+                </button>
+            </div>
+        </div>
         <div class="chat-list-body" id="chatList">
         </div>
     </div>
 
     <div class="message-area">
-        <div class="message-list" id="messages"></div>
-        <div class="scrollbar-thumb" id="custom-scrollbar"></div>
+        <div class="message-list" id="messages" role="log" aria-live="polite">
+        </div>
+        <div class="scrollbar-thumb" id="custom-scrollbar" aria-hidden="true"></div>
         <div class="input-group">
-            <label for="messageInput"></label>
-            <input type="text" id="messageInput" placeholder="Введите текст..."/>
-            <button id="sendBtn" onclick="sendMessage()">Отправить</button>
+            <input
+                    type="text"
+                    id="messageInput"
+                    placeholder="Введите сообщение..."
+                    aria-label="Введите сообщение"
+            >
+            <button id="sendBtn" aria-label="Отправить сообщение">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     aria-hidden="true">
+                    <path d="M22 2L11 13"></path>
+                    <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
+                </svg>
+            </button>
         </div>
     </div>
 </div>
 
-<script src="/static/chat.js"></script>
+<script type="module" src="/static/js/chat.js"></script>
 </body>
 </html>
