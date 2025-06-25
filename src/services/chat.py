@@ -1,16 +1,21 @@
-from src.repositories.chat import ChatRepository
+from src.core.exceptions import LogicError, NotFoundError
 from src.models import Chat, ChatType, User
+from src.repositories.chat import ChatRepository
 from src.repositories.chat_member import ChatMemberRepository
 from src.services.chat_member import ChatMemberService
 from src.services.group import GroupService
 from src.services.user import UserService
-from src.core.exceptions import LogicError, NotFoundError
 
 
 class ChatService:
-    def __init__(self, chat_repo: ChatRepository, chat_member_repo: ChatMemberRepository, user_service: UserService,
-                 chat_member_service: ChatMemberService,
-                 group_service: GroupService):
+    def __init__(
+        self,
+        chat_repo: ChatRepository,
+        chat_member_repo: ChatMemberRepository,
+        user_service: UserService,
+        chat_member_service: ChatMemberService,
+        group_service: GroupService,
+    ):
         self.chat_repo = chat_repo
         self.chat_member_repo = chat_member_repo
         self.user_service = user_service
