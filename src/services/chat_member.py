@@ -1,5 +1,5 @@
 from src.core.exceptions import NotFoundError, AlreadyExistsError
-from src.models import Chat, Group
+from src.models import Chat, Group, User
 from src.repositories.chat_member import ChatMemberRepository
 from src.services.user import UserService
 
@@ -36,3 +36,6 @@ class ChatMemberService:
     async def check_user_in_this_chat(self, chat_id: int, user_id: int) -> None:
         if not self.is_user_in_chat(chat_id, user_id):
             raise NotFoundError("Пользователь не состоит в чате")
+
+    async def get_chat_members(self, chat_id: int) -> list[User]:
+        return await self.chat_member_repo.get_chat_members(chat_id)

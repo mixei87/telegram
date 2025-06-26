@@ -27,18 +27,18 @@ class MessageService:
         self.user_service = user_service
         self.chat_member_service = chat_member_service
 
-    async def create_message(
-        self, sender_id: int, data: MessageCreate
-    ) -> Message | None:
+    async def create_message(self, data: MessageCreate) -> Message | None:
         await self.chat_service.get_exist_chat(data.chat_id)
-        await self.user_service.get_exist_user(sender_id)
+        await self.user_service.get_exist_user(data.sender_id)
 
         # Проверяем, может ли пользователь писать в этот чат
-        if not await self.chat_member_service.is_user_in_chat(data.chat_id, sender_id):
+        if not await self.chat_member_service.is_user_in_chat(
+            data.chat_id, data.sender_id
+        ):
             raise NotFoundError("Пользователь не состоит в чате")
 
         return await self.message_repo.create(
-            data.external_id, data.chat_id, sender_id, data.text
+            data.external_id, data.chat_id, data.sender_id, data.text
         )
 
     async def get_messages(

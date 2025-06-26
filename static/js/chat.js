@@ -154,6 +154,9 @@ function connectWebSocket(user_id) {
 
 function selectChat(chatId) {
     currentChatId = chatId;
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({action: "get_chat_members", chat_id: chatId}));
+    }
     const messageInput = document.getElementById("messageInput");
     if (messageInput) {
         messageInput.focus();
@@ -176,7 +179,7 @@ async function sendMessage() {
     const msg = {external_id, chat_id: currentChatId, text};
     if (ws && ws.readyState === WebSocket.OPEN) {
         console.log(JSON.stringify(msg));
-        ws.send(JSON.stringify(msg));
+        ws.send(JSON.stringify({action: "send_message", msg: msg}));
         log(text, true);
     }
     messageInput.value = "";

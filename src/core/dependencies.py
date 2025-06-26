@@ -84,8 +84,10 @@ def get_message_service(
     return MessageService(message_repo, chat_service, user_service, chat_member_service)
 
 
-def get_redis_chat_service() -> RedisChatService:
-    return RedisChatService(redis)
+def get_redis_chat_service(
+    chat_members_service: ChatMemberService = Depends(get_chat_member_service),
+) -> RedisChatService:
+    return RedisChatService(redis, chat_members_service)
 
 
 UserServiceDepends = Annotated[UserService, Depends(get_user_service)]

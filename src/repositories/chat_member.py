@@ -26,3 +26,12 @@ class ChatMemberRepository:
     async def add_member(self, chat: Chat, user: User) -> None:
         self.session.add(ChatMember(chat_id=chat.id, user_id=user.id))
         await self.session.flush()
+
+    async def get_chat_members(self, chat_id: int) -> list[User]:
+        stmt = (
+            select(User)
+            .join(ChatMember, User.id == ChatMember.user_id)
+            .where(ChatMember.chat_id == chat_id)
+        )
+        result = await self.session.execute(stmt)
+        return list(result.scalars().all())
