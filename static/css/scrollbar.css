@@ -1,0 +1,40 @@
+/* Базовые стили скроллбара */
+.scrollbar-thumb {
+    position: absolute;
+    right: 2px;
+    top: 0;
+    width: 6px;
+    border-radius: 3px;
+    background-color: rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    will-change: transform, opacity;
+    z-index: 1000;
+}
+
+/* Предотвращение выделения текста при перетаскивании скроллбара */
+.scrollbar-thumb::selection {
+    background: transparent;
+}
+
+.scrollbar-thumb::-moz-selection {
+    background: transparent;
+}
+
+/* Контейнер с прокруткой */
+.scroll-container {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    overscroll-behavior: contain; /* Prevent pull-to-refresh */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+/* Скрытие стандартного скроллбара во всех браузерах */
+.scroll-container::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+}
