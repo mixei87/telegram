@@ -27,7 +27,7 @@ body {
     overflow: hidden;
     font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Apple Color Emoji", "Segoe UI", Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
     display: flex;
-    background: var(--bg-color) url('/static/img/background15.png') fixed center;
+    background: var(--bg-color) url('/static/img/background.png') fixed center;
     background-blend-mode: overlay;
     color: var(--text-color);
     line-height: 1.5;
