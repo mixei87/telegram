@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Чат</title>
+    <title>Kemo</title>
     <link rel="stylesheet" href="/static/css/scrollbar.css">
     <link rel="stylesheet" href="/static/css/chat.css">
+    <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
     <script>
         window.APP_CONFIG = {
             WS_URL: "{{ config.get('WS_URL') }}"
@@ -14,7 +15,17 @@
 </head>
 <body>
 <div id="app">
-    <div class="chat-list">
+    <button class="menu-toggle" id="menuToggle" aria-label="Меню" aria-expanded="false" aria-controls="chatListContainer">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+    </button>
+    
+    <div class="chat-overlay" id="chatOverlay" tabindex="-1"></div>
+    
+    <div class="chat-list" id="chatListContainer">
         <div class="chat-list-header">
             <div class="user-input-container">
                 <label for="userIdInput"></label>
@@ -34,7 +45,7 @@
         </div>
     </div>
 
-    <div class="message-area">
+    <div class="message-area" id="messageArea">
         <div class="message-list" id="messages" role="log" aria-live="polite">
         </div>
         <div class="scrollbar-thumb" id="custom-scrollbar" aria-hidden="true"></div>
@@ -57,6 +68,6 @@
     </div>
 </div>
 
-<script type="module" src="/static/js/chat.js"></script>
+<script type="module" src="/static/js/chat.js" defer></script>
 </body>
 </html>
