@@ -284,9 +284,31 @@ function selectChat(chatId) {
     if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({action: "get_chat_members", chat_id: chatId}));
     }
+    
+    // Закрываем меню на мобильных устройствах
+    if (window.innerWidth <= 768) {
+        const body = document.body;
+        const chatOverlay = document.getElementById('chatOverlay');
+        const menuToggle = document.getElementById('menuToggle');
+        
+        if (body && chatOverlay && menuToggle) {
+            body.classList.remove('menu-open');
+            menuToggle.setAttribute('aria-expanded', 'false');
+            chatOverlay.style.opacity = '0';
+            chatOverlay.setAttribute('aria-hidden', 'true');
+            setTimeout(() => chatOverlay.style.display = 'none', 300);
+        }
+    }
+    
+    // Фокусируемся на поле ввода сообщения
     const messageInput = document.getElementById("messageInput");
     if (messageInput) {
-        messageInput.focus();
+        // Небольшая задержка для плавности анимации
+        setTimeout(() => {
+            messageInput.focus();
+            // Прокручиваем к полю ввода, если оно не видно
+            messageInput.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }, 300);
     } else {
         console.error('Поле ввода сообщения не найдено');
     }

@@ -27,14 +27,14 @@
     
     <div class="chat-list" id="chatListContainer">
         <div class="chat-list-header">
+            <h2 class="chat-list-title">Чаты</h2>
             <div class="user-input-container">
-                <label for="userIdInput"></label>
                 <input
-                        type="text"
-                        id="userIdInput"
-                        placeholder="ID пользователя"
-                        class="user-id-input"
-                        aria-label="ID пользователя"
+                    type="text"
+                    id="userIdInput"
+                    placeholder="ID пользователя"
+                    class="user-id-input"
+                    aria-label="ID пользователя"
                 >
                 <button id="connectBtn" class="load-chats-btn" aria-label="Загрузить чаты">
                     Загрузить чаты
@@ -42,6 +42,7 @@
             </div>
         </div>
         <div class="chat-list-body" id="chatList">
+            <!-- Список чатов будет добавлен сюда -->
         </div>
     </div>
 
@@ -56,10 +57,9 @@
                     placeholder="Введите сообщение..."
                     aria-label="Введите сообщение"
             >
-            <button id="sendBtn" aria-label="Отправить сообщение">
+            <button id="sendBtn" class="send-button" aria-label="Отправить сообщение">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                     aria-hidden="true">
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M22 2L11 13"></path>
                     <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
                 </svg>
