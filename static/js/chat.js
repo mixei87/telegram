@@ -28,19 +28,19 @@ function init() {
 // Функции для работы с мобильным меню
 function setupMobileMenu() {
     console.log('setupMobileMenu вызвана');
-    
+
     const menuToggle = document.getElementById('menuToggle');
     const chatList = document.getElementById('chatListContainer');
     const chatOverlay = document.getElementById('chatOverlay');
     const body = document.body;
-    
-    console.log('Элементы меню:', { menuToggle, chatList, chatOverlay });
-    
+
+    console.log('Элементы меню:', {menuToggle, chatList, chatOverlay});
+
     if (!menuToggle || !chatList || !chatOverlay) {
         console.error('Не найдены необходимые элементы меню');
         return;
     }
-    
+
     function openMenu() {
         console.log('Открываем меню');
         body.classList.add('menu-open');
@@ -50,7 +50,7 @@ function setupMobileMenu() {
         setTimeout(() => chatOverlay.style.opacity = '1', 10);
         console.log('Классы body после открытия:', body.className);
     }
-    
+
     function closeMenu() {
         console.log('Закрываем меню');
         body.classList.remove('menu-open');
@@ -60,52 +60,52 @@ function setupMobileMenu() {
         setTimeout(() => chatOverlay.style.display = 'none', 300);
         console.log('Классы body после закрытия:', body.className);
     }
-    
+
     function toggleMenu(e) {
         if (e) {
             e.preventDefault();
             e.stopPropagation();
         }
-        
+
         if (body.classList.contains('menu-open')) {
             closeMenu();
         } else {
             openMenu();
         }
     }
-    
+
     // Обработчик клика по кнопке меню
     menuToggle.addEventListener('click', (e) => {
         console.log('Клик по кнопке меню', e);
         toggleMenu(e);
     });
-    
+
     // Проверяем, что обработчик добавлен
     console.log('Обработчики кнопки меню:', menuToggle.onclick);
-    
+
     // Закрытие при клике на оверлей
     chatOverlay.addEventListener('click', closeMenu);
-    
+
     // Закрытие при нажатии Escape
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && body.classList.contains('menu-open')) {
             closeMenu();
         }
     });
-    
+
     // Обработка свайпов
     let touchStartX = 0;
     let touchEndX = 0;
     const SWIPE_THRESHOLD = 50;
-    
+
     document.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
-    
+    }, {passive: true});
+
     document.addEventListener('touchend', (e) => {
         touchEndX = e.changedTouches[0].screenX;
         const diff = touchStartX - touchEndX;
-        
+
         // Свайп вправо (открытие)
         if (diff < -SWIPE_THRESHOLD && !body.classList.contains('menu-open')) {
             openMenu();
@@ -114,8 +114,8 @@ function setupMobileMenu() {
         else if (diff > SWIPE_THRESHOLD && body.classList.contains('menu-open')) {
             closeMenu();
         }
-    }, { passive: true });
-    
+    }, {passive: true});
+
     // Инициализация состояния
     closeMenu();
 }
@@ -131,30 +131,30 @@ function initElements() {
 // Запуск инициализации после загрузки DOM
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM полностью загружен');
-    
+
     // Инициализируем элементы
     console.log('Инициализация элементов...');
     initElements();
-    
+
     // Проверяем, мобильное ли устройство
     const isMobile = window.innerWidth <= 768;
     console.log('Мобильное устройство:', isMobile, 'ширина экрана:', window.innerWidth);
-    
+
     // Настраиваем мобильное меню
     console.log('Настройка мобильного меню...');
     setupMobileMenu();
-    
+
     // Добавляем глобальную переменную для отладки
     window.debugMenu = {
         openMenu: () => document.body.classList.add('menu-open'),
         closeMenu: () => document.body.classList.remove('menu-open')
     };
     console.log('Отладка: используйте window.debugMenu.openMenu() и window.debugMenu.closeMenu() для управления меню');
-    
+
     // Обработчик изменения размера окна
     window.addEventListener('resize', () => {
         const currentIsMobile = window.innerWidth <= 768;
-        
+
         // Переинициализируем меню при переходе между мобильной и десктопной версией
         if (isMobile !== currentIsMobile) {
             if (currentIsMobile) {
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // На десктопе сбрасываем состояние меню
                 const chatList = document.getElementById('chatListContainer');
                 const messageArea = document.getElementById('messageArea');
-                
+
                 if (chatList) chatList.classList.remove('visible');
                 if (messageArea) messageArea.classList.remove('chat-hidden');
                 document.body.style.overflow = '';
@@ -245,7 +245,7 @@ async function loadChats() {
     chats.forEach(chat => {
         const div = document.createElement("div");
         div.className = "chat-item";
-        div.textContent = chat.name + ` (id=${chat.id})`;
+        div.textContent = chat.name;
         div.dataset.chatId = chat.id;
         div.onclick = () => selectChat(chat.id);
         chatList.appendChild(div);
@@ -284,13 +284,13 @@ function selectChat(chatId) {
     if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({action: "get_chat_members", chat_id: chatId}));
     }
-    
+
     // Закрываем меню на мобильных устройствах
     if (window.innerWidth <= 768) {
         const body = document.body;
         const chatOverlay = document.getElementById('chatOverlay');
         const menuToggle = document.getElementById('menuToggle');
-        
+
         if (body && chatOverlay && menuToggle) {
             body.classList.remove('menu-open');
             menuToggle.setAttribute('aria-expanded', 'false');
@@ -299,7 +299,7 @@ function selectChat(chatId) {
             setTimeout(() => chatOverlay.style.display = 'none', 300);
         }
     }
-    
+
     // Фокусируемся на поле ввода сообщения
     const messageInput = document.getElementById("messageInput");
     if (messageInput) {
@@ -307,7 +307,7 @@ function selectChat(chatId) {
         setTimeout(() => {
             messageInput.focus();
             // Прокручиваем к полю ввода, если оно не видно
-            messageInput.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            messageInput.scrollIntoView({behavior: 'smooth', block: 'end'});
         }, 300);
     } else {
         console.error('Поле ввода сообщения не найдено');

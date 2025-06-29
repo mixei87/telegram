@@ -40,10 +40,8 @@ async def websocket_handler(
                         await redis.add_to_queue(member_id, message_json)
     except WebSocketDisconnect:
         print(f"WebSocket disconnected: {user_id}", flush=True)
+        ws_manager.disconnect(user_id)
     except NotFoundError as e:
         print(e, flush=True)
     except Exception as e:
         print(f"Unexpected error in WebSocket: {e}", flush=True)
-    finally:
-        ws_manager.disconnect(user_id)
-        await websocket.close()

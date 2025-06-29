@@ -4,7 +4,7 @@ from fastapi.responses import HTMLResponse
 from src.core.config import settings
 from src.core.templates import templates
 
-router = APIRouter(prefix="/chat", tags=["Chat client"], include_in_schema=False)
+router = APIRouter(tags=["Chat client"], include_in_schema=False)
 
 
 @router.get("/", response_class=HTMLResponse)
