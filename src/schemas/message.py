@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict
 from src.schemas.base import (
     IdValidationMixin,
@@ -33,6 +35,7 @@ class MessageResponse(BaseModel):
     sender_id: int
     text: str
     is_read: bool
+    timestamp: datetime
 
     model_config = ConfigDict(from_attributes=True)
 
