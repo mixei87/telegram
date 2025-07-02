@@ -24,9 +24,9 @@ export function showNotification(message, type = 'info', duration = 5000) {
     notification.className = `notification ${type}`;
     notification.setAttribute('role', 'alert');
     notification.setAttribute('aria-live', 'assertive');
-    
+
     // Добавляем иконку в зависимости от типа
-    let icon = '';
+    let icon;
     switch (type) {
         case 'success':
             icon = '✓';
@@ -40,49 +40,62 @@ export function showNotification(message, type = 'info', duration = 5000) {
         default:
             icon = 'ℹ';
     }
+
+    // Создаем элементы уведомления безопасным способом
+    const iconDiv = document.createElement('div');
+    iconDiv.className = 'notification-icon';
+    iconDiv.setAttribute('aria-hidden', 'true');
+    iconDiv.textContent = icon;
     
-    // Собираем HTML уведомления
-    notification.innerHTML = `
-        <div class="notification-icon" aria-hidden="true">${icon}</div>
-        <div class="notification-content">${message}</div>
-        <button class="notification-close" aria-label="Закрыть уведомление">&times;</button>
-    `;
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'notification-content';
+    contentDiv.textContent = message;
     
+    const closeButton = document.createElement('button');
+    closeButton.className = 'notification-close';
+    closeButton.setAttribute('aria-label', 'Закрыть уведомление');
+    closeButton.textContent = '×';
+    
+    // Очищаем и добавляем элементы
+    notification.textContent = '';
+    notification.appendChild(iconDiv);
+    notification.appendChild(contentDiv);
+    notification.appendChild(closeButton);
+
     // Добавляем уведомление в контейнер
     container.appendChild(notification);
-    
+
     // Запускаем анимацию появления
     setTimeout(() => {
         notification.classList.add('show');
     }, 10);
-    
+
     // Функция закрытия уведомления
     const closeNotification = () => {
         notification.classList.remove('show');
         notification.classList.add('hide');
-        
+
         // Удаляем уведомление из DOM после завершения анимации
         setTimeout(() => {
             if (notification.parentNode) {
                 notification.parentNode.removeChild(notification);
             }
-            
+
             // Удаляем контейнер, если больше нет уведомлений
             if (container && container.children.length === 0) {
                 document.body.removeChild(container);
             }
         }, 300); // Должно соответствовать длительности анимации в CSS
     };
-    
-    // Обработчик кнопки закрытия
-    const closeButton = notification.querySelector('.notification-close');
+
+    // Обработчик кнопки закрытия (используем существующую кнопку)
     closeButton.addEventListener('click', closeNotification);
-    
+
     // Автоматическое закрытие, если указана длительность
     if (duration > 0) {
         setTimeout(closeNotification, duration);
     }
-    
+
     return notification;
 }
 

@@ -2,134 +2,73 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Kemo</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#0084ff">
-    <title>Kemo</title>
-    <link rel="stylesheet" href="/static/css/chat.css">
-    <link rel="stylesheet" href="/static/css/notifications.css">
-    <link rel="stylesheet" href="/static/css/ios-fixes.css">
+
+    <link rel="stylesheet" href="/static/css/variables.css">
+    <link rel="stylesheet" href="/static/css/scrollbar.css" media="all">
+    <link rel="stylesheet" href="/static/css/buttons.css" media="all">
+    <link rel="stylesheet" href="/static/css/chat.css" media="all">
+    <link rel="stylesheet" href="/static/css/ios-fixes.css" media="all">
+    <link rel="stylesheet" href="/static/css/notifications.css" media="all">
     <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
-    <style>
-    .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border-width: 0;
-    }
-    /* Анимация загрузки */
-    @keyframes spin {
-        to { transform: rotate(360deg); }
-    }
-    .loading-spinner {
-        display: inline-block;
-        width: 1em;
-        height: 1em;
-        border: 2px solid rgba(0, 0, 0, 0.1);
-        border-radius: 50%;
-        border-top-color: #0084ff;
-        animation: spin 1s ease-in-out infinite;
-        vertical-align: middle;
-    }
-    </style>
-    <script>
-        // Обнаружение iOS и добавление класса для стилей
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
-                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-        if (isIOS) {
-            document.documentElement.classList.add('ios-device');
-        }
-    </script>
-    <script>
-        window.APP_CONFIG = {
-            WS_URL: "{{ config.get('WS_URL') }}",
-            API_BASE_URL: "/api"
-        };
-    </script>
 </head>
 <body>
-<div id="app">
-    <!-- Кнопка меню для мобильных устройств -->
-    <button class="menu-toggle" id="menuToggle" aria-label="Меню" aria-expanded="false" aria-controls="chatListContainer">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" 
-             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
-        <span class="sr-only">Меню</span>
-    </button>
-    
+<div class="app" id="app">
+    <!--    &lt;!&ndash; Кнопка меню для мобильных устройств &ndash;&gt;-->
+    <!--    <button class="menu-toggle" id="menuToggle" aria-label="Меню" aria-expanded="false" aria-controls="sidebar">-->
+    <!--        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"-->
+    <!--             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">-->
+    <!--            <line x1="3" y1="12" x2="21" y2="12"></line>-->
+    <!--            <line x1="3" y1="6" x2="21" y2="6"></line>-->
+    <!--            <line x1="3" y1="18" x2="21" y2="18"></line>-->
+    <!--        </svg>-->
+    <!--        <span class="sr-only">Меню</span>-->
+    <!--    </button>-->
+
     <!-- Оверлей для мобильного меню -->
-    <div class="chat-overlay" id="chatOverlay" tabindex="-1" aria-hidden="true"></div>
-    
+    <!--    <div class="sidebar-overlay" id="sidebarOverlay" tabindex="-1" aria-hidden="true"></div>-->
+
     <!-- Боковая панель с чатами -->
-    <aside class="chat-list" id="chatListContainer" aria-label="Список чатов">
-        <!-- Блок управления -->
-        <div class="chat-controls">
-            <input
-                type="text"
-                id="userIdInput"
-                placeholder="ID пользователя"
-                class="user-id-input"
-                aria-label="ID пользователя"
-                autocomplete="off"
-                autocorrect="off"
-                autocapitalize="off"
-                spellcheck="false"
-            >
-            <button id="connectBtn" class="load-chats-btn" aria-label="Загрузить чаты">
-                <span class="btn-text">Загрузить чаты</span>
-                <span class="sr-only">Загрузить чаты</span>
+    <aside class="sidebar" id="sidebar" aria-label="Список чатов">
+        <div class="sidebar__controls">
+            <input type="text" id="userIdInput" placeholder="ID пользователя" class="sidebar__input"
+                   aria-label="ID пользователя" autocomplete="off" autocorrect="off" autocapitalize="off"
+                   spellcheck="false">
+            <button id="connectBtn" class="btn btn--primary" aria-label="Загрузить чаты">
+                Загрузить чаты
             </button>
         </div>
-        <div class="chats" id="chatList" role="list">
+        <div class="chats-sidebar scroll-container" id="chats-sidebar" role="list">
             <!-- Список чатов будет добавлен динамически -->
         </div>
     </aside>
-
     <!-- Основная область с сообщениями -->
-    <main class="message-area" id="messageArea" aria-label="Область сообщений">
-        <div class="messages" id="messageList" role="log" aria-live="polite">
-            <!-- Сообщения будут добавлены динамически -->
-        </div>
-        
-        <form id="messageForm" class="input-group" aria-label="Форма отправки сообщения">
-            <input
-                type="text"
-                id="messageInput"
-                placeholder="Введите сообщение..."
-                aria-label="Введите сообщение"
-                autocomplete="off"
-                autocorrect="off"
-                autocapitalize="sentences"
-                spellcheck="true"
-                enterkeyhint="send"
-            >
-            <button type="submit" id="sendBtn" class="send-button" aria-label="Отправить сообщение">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2" stroke-linecap="round" 
-                     stroke-linejoin="round" aria-hidden="true">
-                    <path d="M22 2L11 13"></path>
-                    <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
-                </svg>
-                <span class="sr-only">Отправить</span>
-            </button>
-        </form>
-    </main>
-    
-    <!-- Уведомления об ошибках -->
-    <div id="notifications" class="notifications" aria-live="polite"></div>
+    <div class="chat" id="chat">
+        <!--        <main class="chat__messages scroll-container" id="chat-messages" aria-label="Область сообщений">-->
+        <!--            <div class="messages-list" id="messages-list" role="log" aria-live="polite">-->
+        <!--                &lt;!&ndash; Сообщения будут добавлены динамически &ndash;&gt;-->
+        <!--            </div>-->
+        <!--        </main>-->
+
+        <!--        <form id="chat-form" class="chat__form" aria-label="Форма отправки сообщения">-->
+        <!--            <input type="text" id="chat-input" class="chat__input" placeholder="Введите сообщение..."-->
+        <!--                   aria-label="Введите сообщение" autocomplete="off" autocorrect="off" autocapitalize="sentences"-->
+        <!--                   spellcheck="true" enterkeyhint="send"/>-->
+        <!--            <button type="submit" id="chat-submit" class="chat__submit" aria-label="Отправить сообщение">-->
+        <!--                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"-->
+        <!--                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">-->
+        <!--                    <path d="M22 3L15 23L11 14L2 10L22 3L11 14"></path>-->
+        <!--                </svg>-->
+        <!--            </button>-->
+        <!--        </form>-->
+    </div>
 </div>
 
-<!-- Загрузка приложения -->
-<script type="module" src="/static/js/chat.js" defer></script>
-<script type="module" src="/static/js/app/index.js"></script>
+<!--&lt;!&ndash; Подключаем основной скрипт приложения &ndash;&gt;-->
+<!--<script type="module" src="/static/js/main.js"></script>-->
 </body>
 </html>

@@ -1,34 +1,19 @@
-/* Стили для iOS устройств */
-.ios-device {
-    /* Учитываем безопасные зоны в iOS */
-    --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
-}
+/* 
+ * Специфичные исправления только для iOS
+ * Используем @supports для точного таргетинга на iOS
+ */
 
-/* Фиксируем нижнюю панель ввода */
-.ios-device .input-group {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding-bottom: calc(15px + var(--safe-area-inset-bottom));
-    background: #f0f2f5;
-    border-top: 1px solid #e9edef;
-    z-index: 1000;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Добавляем отступ для контента, чтобы он не скрывался за панелью ввода */
-.ios-device .messages {
-    padding-bottom: 80px; /* Высота панели ввода + отступ */
-}
-
-/* Учитываем безопасные зоны в Safari */
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-    .ios-device .input-group {
-        padding-bottom: calc(15px + env(safe-area-inset-bottom));
+/* Исправление для input type="date" на iOS */
+@supports (-webkit-touch-callout: none) {
+    /* Стили только для iOS */
+    input[type="date"] {
+        min-height: 1.5em;
     }
     
-    .ios-device .messages {
-        padding-bottom: calc(80px + env(safe-area-inset-bottom));
-    }
+    /* Другие специфичные исправления для iOS */
+}
+
+/* Исправление для viewport на старых iOS */
+@supports (-webkit-touch-callout: none) and (not (translate: none)) {
+    /* Стили только для старых iOS */
 }
